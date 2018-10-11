@@ -6,10 +6,17 @@ import ballerina/io;
 // A service is a network-accessible API. This service is accessed
 // at '/hello', and bound to a listener on port 9090.
 // `http:Service`is a protocol object in the `http` package.
+@http:ServiceConfig {
+  basePath: "/"
+}
 service<http:Service> hello bind { port: 9090 } {
 
   // A resource is an invokable API method. This resource accessed
   // at '/hello/sayHello’. `caller` is the client calling us.
+  @http:ResourceConfig {
+    methods: ["POST"],
+    path: "/"
+  }
   sayHello (endpoint caller, http:Request request) {
 
     // Create object to carry data back to caller.
