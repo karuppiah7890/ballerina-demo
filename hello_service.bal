@@ -12,13 +12,17 @@ endpoint twitter:Client twitterClient {
   accessTokenSecret: config:getAsString("accessTokenSecret")
 };
 
+endpoint http:Listener listener {
+    port: 9090
+};
+
 // A service is a network-accessible API. This service is accessed
 // at '/hello', and bound to a listener on port 9090.
 // `http:Service`is a protocol object in the `http` package.
 @http:ServiceConfig {
   basePath: "/"
 }
-service<http:Service> hello bind { port: 9090 } {
+service<http:Service> hello bind listener {
 
   // A resource is an invokable API method. This resource accessed
   // at '/hello/sayHello’. `caller` is the client calling us.
