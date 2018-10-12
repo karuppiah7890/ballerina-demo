@@ -2,6 +2,15 @@
 // package is referenced with ‘http’ namespace in the code body.
 import ballerina/http;
 import ballerina/io;
+import ballerina/config;
+import wso2/twitter;
+
+endpoint twitter:Client twitterClient {
+  clientId: config:getAsString("consumerKey"),
+  clientSecret: config:getAsString("consumerSecret"),
+  accessToken: config:getAsString("accessToken"),
+  accessTokenSecret: config:getAsString("accessTokenSecret")
+};
 
 // A service is a network-accessible API. This service is accessed
 // at '/hello', and bound to a listener on port 9090.
@@ -18,12 +27,11 @@ service<http:Service> hello bind { port: 9090 } {
     path: "/"
   }
   sayHello (endpoint caller, http:Request request) {
+    string statusContent = check request.getTextPayload();
+    twitter:Status status = check twitterClient->tweet(statusContent);
 
-    // Create object to carry data back to caller.
     http:Response response = new;
-
-    // Objects have function calls.
-    response.setTextPayload("Hello Ballerina!\n");
+    response.setTextPayload("ID:" + <string>status.id + "\n");
 
     // Send a response to the caller. Ignore errors with `_`.
     // ‘->’ is a synchronous network-bound call.
