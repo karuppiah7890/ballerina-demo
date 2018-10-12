@@ -4,6 +4,7 @@ import ballerina/http;
 import ballerina/io;
 import ballerina/config;
 import wso2/twitter;
+import ballerinax/docker;
 
 endpoint twitter:Client twitterClient {
   clientId: config:getAsString("consumerKey"),
@@ -12,6 +13,21 @@ endpoint twitter:Client twitterClient {
   accessTokenSecret: config:getAsString("accessTokenSecret")
 };
 
+@docker:Config {
+  registry: "registry.hub.docker.com",
+  name: "karuppiah7890/ballerina_hello_world",
+  tag: "v0.0.1"
+}
+
+@docker:CopyFiles {
+  files: [
+    {
+      source: "./twitter.toml", target: "./home/ballerina/conf/twitter.toml", isBallerinaConf: true
+    }
+  ]
+}
+
+@docker:Expose {}
 endpoint http:Listener listener {
     port: 9090
 };
